@@ -1,0 +1,37 @@
+{% extends '@DGInstantAdmin/base.html.twig' %}
+
+{% block title %}{{ entityName }} index {% endblock %}
+
+{% block body %}
+    <h1>{{ entityName ~ ' ' ~ methodName }}</h1>
+
+    <table class="table table-responsive">
+        <thead class="thead-dark">
+        <tr>
+            {% for property in entityProperties %}
+                <th>{{ property.name | capitalize }}</th>
+            {% endfor %}
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                {% for v in dg_dismount(entity) %}
+                    <td>{% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':v} %}</td>
+                {% endfor %}
+                <td>
+                    <a href="{{ path((entityName | lower) ~ '_show', {'id': entity.id}) }}">show</a>
+                    <a href="{{ path((entityName | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path(entityName | lower ~ '_new') }}">Create new</a>
+{% endblock %}

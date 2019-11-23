@@ -1,0 +1,22 @@
+{% set type = dg_getType(v) %}
+{#{{ dump(type) }}#}
+
+{% if type == 'collection' %}
+    {% for t in v %}
+         -> {% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':t} %} <- <br>
+    {% endfor %}
+{% elseif type == 'object' %}
+    {{ v }}
+{% elseif type == 'string' %}
+    {{ v | raw }}
+{% elseif type == 'datetime' %}
+    {{ v | date('Y-m-d H:i:s') }}
+{% elseif type == 'integer' %}
+    {{ v | raw }}
+{% elseif type == 'null' %}
+    {{ 'null' }}
+{% elseif type == 'array' %}
+    {% for t in v %}
+        {% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':t} %}
+    {% endfor %}
+{% endif %}

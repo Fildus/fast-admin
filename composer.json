@@ -1,0 +1,22 @@
+{
+  "name": "dg/fast-admin-bundle",
+  "description": "Fast admin for symfony 4",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David GASTALDELLO",
+      "email": "davidgastaldello@msn.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "DG\\InstantAdminBundle\\": "src"
+    }
+  },
+  "require-dev": {
+  }
+}

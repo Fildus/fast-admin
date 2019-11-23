@@ -1,0 +1,34 @@
+services:
+#    DG\InstantAdminBundle\:
+#        resource: '../../../src/*'
+#        exclude: '../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+#        public: true
+
+    DG\InstantAdminBundle\EventSubscriber\ControllerSubscriber:
+        public: true
+        tags:
+            - {name: 'kernel.event_subscriber', event: 'kernel.controller'}
+        arguments:
+          ['@service_container']
+
+    DG\InstantAdminBundle\Workflow:
+        public: true
+        arguments:
+          ['@annotations.reader', '%kernel.root_dir%']
+
+    DG\InstantAdminBundle\Controller\InstantAdminController:
+        public: true
+        tags: ['controller.service_arguments']
+        arguments:
+          ['@DG\InstantAdminBundle\Repository\Repository', '@annotations.reader']
+        calls:
+            - [setContainer, ['@service_container']]
+
+    DG\InstantAdminBundle\Repository\Repository:
+        public: true
+        arguments:
+          ['@doctrine']
+
+    DG\InstantAdminBundle\Twig\InstantAdminExtension:
+        public: true
+        autoconfigure: true
