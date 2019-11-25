@@ -2,21 +2,21 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('bundles/dginstantadmin/assets/css/bootstrap.min.css') }}">
         {% endblock %}
     </head>
     <body class="bg-light">
     <nav class="navbar navbar-light bg-dark text-white">
         Admin
         <a class="navbar-brand" href="#">
-            <img src="/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">
+{#            <img src="/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" alt="">#}
         </a>
     </nav>
     <div class="container-fluid mt-5">
             <div class="row">
-                <aside class="col-2 offset-1 bg-light">
+                <aside class="col-2 offset-1 bg-dark">
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Active</a>
@@ -38,9 +38,7 @@
             </div>
         </div>
         {% block javascripts %}
-            <script src="{{asset('bundles/dginstantadmin/assets/js/jquery-3.3.1.slim.min.js')}}"></script>
-            <script src="{{asset('bundles/dginstantadmin/assets/js/popper.min.js')}}"></script>
-            <script src="{{asset('bundles/dginstantadmin/assets/js/bootstrap.min.js')}}"></script>
+            <script src="{{asset('ia/app.js')}}"></script>
         {% endblock %}
     </body>
 </html>

@@ -3,7 +3,7 @@
 namespace DG\InstantAdminBundle\Annotations;
 
 /**
- * Annotation class for @Admin().
+ * Annotation class for @InstantAdmin().
  *
  * @Annotation
  * @Target({"CLASS", "METHOD"})

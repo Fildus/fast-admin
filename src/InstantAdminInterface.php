@@ -10,8 +10,6 @@ interface InstantAdminInterface
     /**
      * @Route("/", name="_index", methods={"GET"})
      * @FastAdmin()
-     *
-     * @internal
      */
     public function index();
 

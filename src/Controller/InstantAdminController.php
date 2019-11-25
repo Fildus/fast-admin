@@ -32,11 +32,11 @@ class InstantAdminController extends AbstractController
         /** @var Workflow $workflow */
         $workflow = Workflow::getInstance();
 
+        dump($workflow);
+
         return $this->render('@DGInstantAdmin/index.html.twig', [
             'entities' => $this->repository->findAll(),
-            'entityName' => $workflow->getEntityName(),
-            'methodName' => $workflow->getMethodName(),
-            'annotation' => $workflow->getAnnotation(),
+            'workflow' => $workflow,
             'entityProperties' => EntityFunctions::getEntityProperties($workflow->getEntityNamespace()),
         ]);
     }

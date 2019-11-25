@@ -1,9 +1,9 @@
 {% extends '@DGInstantAdmin/base.html.twig' %}
 
-{% block title %}{{ entityName }} index {% endblock %}
+{% block title %}{{ workflow.entityName }} index {% endblock %}
 
 {% block body %}
-    <h1>{{ entityName ~ ' ' ~ methodName }}</h1>
+    <h1>{{ workflow.entityName ~ ' ' ~ workflow.methodName }}</h1>
 
     <table class="table table-responsive">
         <thead class="thead-dark">
@@ -21,8 +21,8 @@
                     <td>{% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':v} %}</td>
                 {% endfor %}
                 <td>
-                    <a href="{{ path((entityName | lower) ~ '_show', {'id': entity.id}) }}">show</a>
-                    <a href="{{ path((entityName | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
+                    <a href="{{ path((workflow.entityName | lower) ~ '_show', {'id': entity.id}) }}">show</a>
+                    <a href="{{ path((workflow.entityName | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -33,5 +33,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path(entityName | lower ~ '_new') }}">Create new</a>
+    <a href="{{ path(workflow.entityName | lower ~ '_new') }}">Create new</a>
 {% endblock %}

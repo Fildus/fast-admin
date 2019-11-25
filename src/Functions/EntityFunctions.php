@@ -22,7 +22,6 @@ class EntityFunctions
                 $properties[] = $entityProperty;
             }
         }
-
         return $properties;
     }
 

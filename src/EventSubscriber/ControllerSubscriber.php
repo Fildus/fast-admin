@@ -2,6 +2,7 @@
 
 namespace DG\InstantAdminBundle\EventSubscriber;
 
+use App\Controller\ProjectController;
 use DG\InstantAdminBundle\Workflow;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,12 +28,18 @@ class ControllerSubscriber implements EventSubscriberInterface
         /** @var Workflow $workflow */
         $workflow = Workflow::getInstance();
 
-        if ($workflow->getAnnotation()) {
+        if ($workflow->isContinue() && $workflow->getAnnotation()) {
+            
+            $controller = $event->getController()[0];
+            $method = $event->getController()[1];
+            /** @var ProjectController $controller */
+            $controller = new $controller();
+
+            $controller->setContainer($this->container);
+
             $workflow->setControllerReturn(
-                call_user_func([
-                    get_class($event->getController()[0]),
-                    $event->getController()[1],
-                ]));
+                $controller->$method()
+            );
 
             return $event->setController([
                 $this->container->get('DG\InstantAdminBundle\Controller\InstantAdminController'),

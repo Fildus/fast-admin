@@ -14,7 +14,7 @@ services:
     DG\InstantAdminBundle\Workflow:
         public: true
         arguments:
-          ['@annotations.reader', '%kernel.root_dir%']
+          ['@annotations.reader', '%kernel.root_dir%', '@Symfony\Contracts\Cache\TagAwareCacheInterface']
 
     DG\InstantAdminBundle\Controller\InstantAdminController:
         public: true
