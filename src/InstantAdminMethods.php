@@ -2,38 +2,48 @@
 
 namespace DG\InstantAdminBundle;
 
-use DG\InstantAdminBundle\Annotations\FastAdmin;
+use DG\InstantAdminBundle\Annotations\InstantAdmin;
 use Symfony\Component\Routing\Annotation\Route;
 
-interface InstantAdminInterface
+trait InstantAdminMethods
 {
     /**
      * @Route("/", name="_index", methods={"GET"})
-     * @FastAdmin()
+     * @InstantAdmin()
      */
-    public function index();
+    public function index()
+    {
+    }
 
     /**
      * @Route("/new", name="_new", methods={"GET","POST"})
-     * @FastAdmin()
+     * @InstantAdmin()
      */
-    public function new();
+    public function new()
+    {
+    }
 
     /**
      * @Route("/{id}", name="_show", methods={"GET"})
-     * @FastAdmin()
+     * @InstantAdmin()
      */
-    public function show();
+    public function show()
+    {
+    }
 
     /**
      * @Route("/{id}/edit", name="_edit", methods={"GET","POST"})
-     * @FastAdmin()
+     * @InstantAdmin()
      */
-    public function edit();
+    public function edit()
+    {
+    }
 
     /**
      * @Route("/{id}", name="_delete", methods={"DELETE"})
-     * @FastAdmin()
+     * @InstantAdmin()
      */
-    public function delete();
+    public function delete()
+    {
+    }
 }

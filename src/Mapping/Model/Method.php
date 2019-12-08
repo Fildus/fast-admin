@@ -6,14 +6,8 @@ use DG\InstantAdminBundle\Annotations\InstantAdmin;
 
 class Method
 {
-    /**
-     * @var string
-     */
-    private $name;
-    /**
-     * @var InstantAdmin
-     */
-    private $adminAnnotation;
+    private string $name;
+    private InstantAdmin $adminAnnotation;
 
     public function getName(): string
     {

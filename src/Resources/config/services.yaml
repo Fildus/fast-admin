@@ -1,34 +1,56 @@
 services:
-#    DG\InstantAdminBundle\:
-#        resource: '../../../src/*'
-#        exclude: '../../../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
-#        public: true
-
-    DG\InstantAdminBundle\EventSubscriber\ControllerSubscriber:
+    instant_admin_bundle.controller_subscriber:
+        class: DG\InstantAdminBundle\EventSubscriber\ControllerSubscriber
         public: true
         tags:
             - {name: 'kernel.event_subscriber', event: 'kernel.controller'}
         arguments:
-          ['@service_container']
+          ['@service_container', '@event_dispatcher', '@console.command.config_dump_reference']
 
-    DG\InstantAdminBundle\Workflow:
+    instant_admin_bundle.workflow:
+        class: DG\InstantAdminBundle\Workflow
         public: true
         arguments:
-          ['@annotations.reader', '%kernel.root_dir%', '@Symfony\Contracts\Cache\TagAwareCacheInterface']
+          ['@annotations.reader', '%kernel.project_dir%', '@Symfony\Contracts\Cache\TagAwareCacheInterface']
 
-    DG\InstantAdminBundle\Controller\InstantAdminController:
+    instant_admin_bundle.instant_admin_controller:
+        class: DG\InstantAdminBundle\Controller\InstantAdminController
         public: true
         tags: ['controller.service_arguments']
         arguments:
-          ['@DG\InstantAdminBundle\Repository\Repository', '@annotations.reader']
+          ['@instant_admin_bundle.repository', '@doctrine.orm.entity_manager']
         calls:
             - [setContainer, ['@service_container']]
 
-    DG\InstantAdminBundle\Repository\Repository:
+
+    instant_admin_bundle.repository:
+        class: DG\InstantAdminBundle\Repository\Repository
         public: true
         arguments:
           ['@doctrine']
 
-    DG\InstantAdminBundle\Twig\InstantAdminExtension:
+    instant_admin_bundle.twig.instant_admin_extension:
+        class: DG\InstantAdminBundle\Twig\InstantAdminExtension
         public: true
         autoconfigure: true
+
+    DG\InstantAdminBundle\Services\:
+        resource: '../../Services'
+        public: true
+        autoconfigure: true
+        autowire: true
+
+    DG\InstantAdminBundle\Services\AdminControllers:
+        public: true
+        arguments:
+          ['@annotations.reader', '%kernel.project_dir%', '@Symfony\Contracts\Cache\TagAwareCacheInterface']
+
+    DG\InstantAdminBundle\Services\AdminAnnotation:
+        public: true
+        arguments:
+            ['@instant_admin_bundle.workflow']
+
+    DG\InstantAdminBundle\Services\EntityNamespace:
+        public: true
+        arguments:
+          ['@doctrine.orm.default_entity_manager']

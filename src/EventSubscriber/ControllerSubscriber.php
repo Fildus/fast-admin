@@ -2,7 +2,11 @@
 
 namespace DG\InstantAdminBundle\EventSubscriber;
 
-use App\Controller\ProjectController;
+use DG\InstantAdminBundle\Services\AdminAnnotation;
+use DG\InstantAdminBundle\Services\AdminControllers;
+use DG\InstantAdminBundle\Services\ControllerNamespace;
+use DG\InstantAdminBundle\Services\EntityNamespace;
+use DG\InstantAdminBundle\Services\MethodName;
 use DG\InstantAdminBundle\Workflow;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -11,40 +15,36 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ControllerSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
-        $this->container->get('DG\InstantAdminBundle\Workflow')->run($event);
+        if ($event->isMasterRequest()) {
+            Workflow::setInstance()->setControllerEvent($event);
 
-        /** @var Workflow $workflow */
-        $workflow = Workflow::getInstance();
+            if ($this->container->get(AdminControllers::class)->run() &&
+                $this->container->get(ControllerNamespace::class)->run() &&
+                $this->container->get(MethodName::class)->run() &&
+                $this->container->get(AdminAnnotation::class)->run() &&
+                $this->container->get(EntityNamespace::class)->run()
+            ) {
+                $controller = $this->container->get(Workflow::getInstance()->getControllerNamespace());
+                $method = Workflow::getInstance()->getMethodName();
 
-        if ($workflow->isContinue() && $workflow->getAnnotation()) {
-            
-            $controller = $event->getController()[0];
-            $method = $event->getController()[1];
-            /** @var ProjectController $controller */
-            $controller = new $controller();
+                $controllerReturn = $controller->$method();
+                Workflow::getInstance()->setControllerReturn($controllerReturn);
 
-            $controller->setContainer($this->container);
-
-            $workflow->setControllerReturn(
-                $controller->$method()
-            );
-
-            return $event->setController([
-                $this->container->get('DG\InstantAdminBundle\Controller\InstantAdminController'),
-                $workflow->getMethodName(),
-            ]);
+                $controller = $this->container->get('instant_admin_bundle.instant_admin_controller');
+                $event->setController(fn () => $controller->$method());
+            }
         }
     }
 

@@ -12,22 +12,14 @@ namespace DG\InstantAdminBundle\Annotations;
  */
 class InstantAdmin
 {
-    /**
-     * @var string|null
-     */
-    public $template = null;
-    /**
-     * @var string|null
-     */
-    public $formType = null;
-    /**
-     * @var int|bool|null
-     */
-    public $pagination = null;
-    /**
-     * @var string|null
-     */
-    public $redirectAfterSubmit = null;
+    public ?string $template;
+    public ?string $formType;
+    public ?bool $pagination;
+    public ?string $redirectAfterSubmit;
+
+    public function __construct()
+    {
+    }
 
     public function getTemplate(): ?string
     {

@@ -3,110 +3,113 @@
 namespace DG\InstantAdminBundle;
 
 use DG\InstantAdminBundle\Annotations\InstantAdmin;
-use DG\InstantAdminBundle\Mapping\Mapping;
-use DG\InstantAdminBundle\Mapping\Model\Controller;
-use DG\InstantAdminBundle\Mapping\Model\Method;
-use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class Workflow
 {
-    use Mapping;
-    use Singleton;
+    private static ?Workflow $instance = null;
+    private ControllerEvent $controllerEvent;
+    private ?array $mappedControllers;
+    private ?string $controllerNamespace;
+    private ?string $methodName;
+    private ?InstantAdmin $instantAdminAnnotation;
+    private ?string $entityNamespace;
+    private ?array $controllerReturn;
 
-    const ALLOWED_METHODS = ['index', 'new', 'show', 'edit', 'delete'];
-
-    private $controllerReturn;
-
-    private $annotation;
-    private $methodName;
-    private $entityName;
-    private $entityNamespace;
-
-    private $continue = true;
-
-    /**
-     * Workflow constructor.
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
-     */
-    public function __construct(Reader $reader, string $rootPath, TagAwareCacheInterface $cache)
+    public static function setInstance()
     {
-        $this->setupControllers($reader, $rootPath, $cache);
-        self::setInstance($this);
+        self::$instance = new Workflow();
+
+        return self::$instance;
     }
 
-    public function run(ControllerEvent $event)
+    public static function getInstance(): Workflow
     {
-        preg_match('#([a-zA-Z\\\]+)::([a-zA-Z]+)$#', $event->getRequest()->get('_controller'), $matches);
-        if (isset($matches[0], $matches[1], $matches[2]) && !isset($matches[3])) {
-            [$requestedControllerNamespace, $requestedMethodName] = [$matches[1], $matches[2]];
-
-            if (!array_key_exists($requestedControllerNamespace, $this->mappedControllers)) {
-                return null;
-            }
-
-            /** @var Controller $mappedController */
-            foreach ($this->mappedControllers as $namespace => $mappedController) {
-                if ($namespace === $requestedControllerNamespace) {
-                    /** @var Method $method */
-                    foreach ($mappedController->getMethods() as $method) {
-                        if ($method->getAdminAnnotation() &&
-                        $method->getName() === $requestedMethodName &&
-                        in_array($method->getName(), self::ALLOWED_METHODS)) {
-                            $this->methodName = $method->getName();
-                            $this->annotation = $method->getAdminAnnotation();
-                        }
-                    }
-                }
-            }
-
-            preg_match('#([a-zA-Z]+)Controller$#', $requestedControllerNamespace, $matches);
-            $this->entityName = ucfirst($matches[1]);
-            $this->entityNamespace = 'App\\Entity\\'.$matches[1];
-        } else {
-            $this->continue = false;
+        if (!self::$instance) {
+            self::$instance = new Workflow();
         }
+
+        return self::$instance;
     }
 
-    public function getAnnotation(): ? InstantAdmin
+    public function setControllerEvent(ControllerEvent $controllerEvent): self
     {
-        return $this->annotation;
+        $this->controllerEvent = $controllerEvent;
+
+        return $this;
     }
 
-    public function getMethodName(): ? string
+    public function getControllerEvent(): ?ControllerEvent
+    {
+        return $this->controllerEvent;
+    }
+
+    public function getMappedControllers(): ?array
+    {
+        return $this->mappedControllers;
+    }
+
+    public function setMappedControllers(array $mappedControllers): self
+    {
+        $this->mappedControllers = $mappedControllers;
+
+        return $this;
+    }
+
+    public function getControllerNamespace(): ?string
+    {
+        return $this->controllerNamespace;
+    }
+
+    public function setControllerNamespace(?string $controllerNamespace): self
+    {
+        $this->controllerNamespace = $controllerNamespace;
+
+        return $this;
+    }
+
+    public function getMethodName(): ?string
     {
         return $this->methodName;
     }
 
-    public function getEntityName(): ? string
+    public function setMethodName(?string $methodName): self
     {
-        return $this->entityName;
+        $this->methodName = $methodName;
+
+        return $this;
     }
 
-    public function getEntityNamespace(): ? string
+    public function setInstantAdminAnnotation(?InstantAdmin $instantAdminAnnotation): self
+    {
+        $this->instantAdminAnnotation = $instantAdminAnnotation;
+
+        return $this;
+    }
+
+    public function getEntityNamespace(): ?string
     {
         return $this->entityNamespace;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getControllerReturn()
+    public function setEntityNamespace(?string $entityNamespace): self
+    {
+        $this->entityNamespace = $entityNamespace;
+
+        return $this;
+    }
+
+    public function getControllerReturn(): ?array
     {
         return $this->controllerReturn;
     }
 
     public function setControllerReturn($controllerReturn): self
     {
-        $this->controllerReturn = $controllerReturn;
+        $this->controllerReturn = is_array($controllerReturn) && null !== $this->controllerNamespace ?
+            $controllerReturn :
+            [$controllerReturn];
 
         return $this;
-    }
-
-    public function isContinue(): bool
-    {
-        return $this->continue;
     }
 }

@@ -2,42 +2,31 @@
 
 namespace DG\InstantAdminBundle\Controller;
 
-use DG\InstantAdminBundle\Functions\EntityFunctions;
 use DG\InstantAdminBundle\Repository\Repository;
 use DG\InstantAdminBundle\Workflow;
-use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class InstantAdminController extends AbstractController
 {
-    /**
-     * @var Repository
-     */
-    private $repository;
+    use EntityMetadata;
 
-    public function __construct(Repository $repository)
+    private Repository $repository;
+    private EntityManager $entityManager;
+
+    public function __construct(Repository $repository, EntityManager $entityManager)
     {
         $this->repository = $repository;
+        $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return Response
-     *
-     * @throws AnnotationException
-     * @throws \ReflectionException
-     */
     public function index()
     {
-        /** @var Workflow $workflow */
-        $workflow = Workflow::getInstance();
-
-        dump($workflow);
-
         return $this->render('@DGInstantAdmin/index.html.twig', [
             'entities' => $this->repository->findAll(),
-            'workflow' => $workflow,
-            'entityProperties' => EntityFunctions::getEntityProperties($workflow->getEntityNamespace()),
+            'workflow' => Workflow::getInstance(),
+            'entityMetadata' => $this->getEntityMetadata(),
         ]);
     }
 

@@ -1,30 +1,32 @@
 {% extends '@DGInstantAdmin/base.html.twig' %}
 
-{% block title %}{{ workflow.entityName }} index {% endblock %}
+{% block title %}
+    {{ dg_entityName() ~ ' ' ~ workflow.methodName }}
+{% endblock %}
 
 {% block body %}
-    <h1>{{ workflow.entityName ~ ' ' ~ workflow.methodName }}</h1>
+    <h1>{{ dg_entityName() ~ ' ' ~ workflow.methodName }}</h1>
 
     <table class="table table-responsive">
         <thead class="thead-dark">
         <tr>
-            {% for property in entityProperties %}
-                <th>{{ property.name | capitalize }}</th>
+            {% for m in entityMetadata %}
+                <th>{{ m.fieldName | capitalize }}</th>
             {% endfor %}
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
+        {% set entityKeys = entityMetadata | keys %}
         {% for entity in entities %}
             <tr>
-                {% for v in dg_dismount(entity) %}
-                    <td>{% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':v} %}</td>
-                {% endfor %}
-                <td>
-                    <a href="{{ path((workflow.entityName | lower) ~ '_show', {'id': entity.id}) }}">show</a>
-                    <a href="{{ path((workflow.entityName | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
-                </td>
-            </tr>
+            {% for v in dg_dismount(entity) %}
+                <td>{% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':v} %}</td>
+            {% endfor %}
+            <td>
+                <a href="{{ path((dg_entityName() | lower) ~ '_show', {'id': entity.id}) }}">show</a>
+                <a href="{{ path((dg_entityName() | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
+            </td>
         {% else %}
             <tr>
                 <td colspan="6">no records found</td>
@@ -33,5 +35,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path(workflow.entityName | lower ~ '_new') }}">Create new</a>
+    <div class="text-right mb-3">
+        <a class="btn btn-success" href="{{ path(dg_entityName() | lower ~ '_new') }}">Create new</a>
+    </div>
 {% endblock %}

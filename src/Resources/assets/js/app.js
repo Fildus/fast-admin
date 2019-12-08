@@ -1,4 +1,4 @@
-import 'bootstrap';
-import '../css/app.scss';
-
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+import 'bootstrap'
+import '../css/app.scss'
+import '@fortawesome/fontawesome-free/js/all.min'
+import './instant-admin.js'

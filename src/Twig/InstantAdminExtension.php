@@ -2,6 +2,7 @@
 
 namespace DG\InstantAdminBundle\Twig;
 
+use DG\InstantAdminBundle\Workflow;
 use Symfony\Component\Validator\Constraints\Collection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -13,6 +14,7 @@ class InstantAdminExtension extends AbstractExtension
         return [
             new TwigFunction('dg_getType', [$this, 'dg_getType']),
             new TwigFunction('dg_dismount', [$this, 'dg_dismount']),
+            new TwigFunction('dg_entityName', [$this, 'dg_entityName']),
         ];
     }
 
@@ -62,7 +64,11 @@ class InstantAdminExtension extends AbstractExtension
             $array[$property->getName()] = $property->getValue($object);
             $property->setAccessible(false);
         }
-
         return $array;
+    }
+
+    public function dg_entityName()
+    {
+        return (string) preg_match('#[a-zA-Z]+$#', Workflow::getInstance()->getEntityNamespace(), $matches) ? $matches[0] : '';
     }
 }

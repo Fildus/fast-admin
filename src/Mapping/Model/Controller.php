@@ -6,20 +6,9 @@ use DG\InstantAdminBundle\Annotations\InstantAdmin;
 
 class Controller
 {
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * @var InstantAdmin
-     */
-    private $adminAnnotation;
-
-    /**
-     * @var array
-     */
-    private $methods;
+    private string $namespace;
+    private InstantAdmin $adminAnnotation;
+    private array $methods;
 
     public function getNamespace(): string
     {
