@@ -17,9 +17,13 @@ class AdminAnnotation
             /** @var Method $modelMethod */
             $modelMethod = $modelController->getMethods()[Workflow::getInstance()->getMethodName()];
 
-            Workflow::getInstance()->setInstantAdminAnnotation($modelMethod->getAdminAnnotation());
+            $modelMethod->getAdminAnnotation();
 
-            return true;
+            if (Workflow::getInstance()) {
+                Workflow::getInstance()->setInstantAdminAnnotation($modelMethod->getAdminAnnotation());
+
+                return true;
+            }
         }
         Workflow::getInstance()->setInstantAdminAnnotation(null);
 

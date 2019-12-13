@@ -15,6 +15,7 @@ class Workflow
     private ?InstantAdmin $instantAdminAnnotation;
     private ?string $entityNamespace;
     private ?array $controllerReturn;
+    private ?string $entityName;
 
     public static function setInstance()
     {
@@ -25,10 +26,6 @@ class Workflow
 
     public static function getInstance(): Workflow
     {
-        if (!self::$instance) {
-            self::$instance = new Workflow();
-        }
-
         return self::$instance;
     }
 
@@ -109,6 +106,18 @@ class Workflow
         $this->controllerReturn = is_array($controllerReturn) && null !== $this->controllerNamespace ?
             $controllerReturn :
             [$controllerReturn];
+
+        return $this;
+    }
+
+    public function getEntityName(): ?string
+    {
+        return $this->entityName;
+    }
+
+    public function setEntityName(?string $entityName): self
+    {
+        $this->entityName = $entityName;
 
         return $this;
     }

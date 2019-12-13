@@ -3,7 +3,6 @@
 namespace DG\InstantAdminBundle\Twig;
 
 use DG\InstantAdminBundle\Workflow;
-use Symfony\Component\Validator\Constraints\Collection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -12,63 +11,72 @@ class InstantAdminExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('dg_getType', [$this, 'dg_getType']),
-            new TwigFunction('dg_dismount', [$this, 'dg_dismount']),
+            new TwigFunction('dg_dismount', [$this, 'dg_dismount'], ['is_safe' => true]),
             new TwigFunction('dg_entityName', [$this, 'dg_entityName']),
+            new TwigFunction('dg_pagination', [$this, 'dg_pagination']),
         ];
     }
 
-    public function dg_getType($value)
+    public function dg_dismount($entity, $metadata)
     {
-        if ($value instanceof \DateTime) {
-            return 'datetime';
-        }
-        if ($value instanceof Collection) {
-            return 'collection';
-        }
-        if ($value instanceof \Doctrine\Common\Collections\Collection) {
-            return 'collection';
-        }
-        if (null === $value) {
-            return 'null';
-        }
-        if (is_array($value)) {
-            return 'array';
-        }
-        if (is_string($value)) {
-            return 'string';
-        }
-        if (is_integer($value)) {
-            return 'integer';
-        }
-        if (is_object($value)) {
-            return 'object';
-        }
-
-        throw new \ErrorException(__CLASS__.' $value not reconized');
-    }
-
-    /**
-     * @param $object
-     *
-     * @return array
-     *
-     * @throws \ReflectionException
-     */
-    public function dg_dismount($object)
-    {
-        $reflectionClass = new \ReflectionClass(get_class($object));
         $array = [];
-        foreach ($reflectionClass->getProperties() as $property) {
-            $property->setAccessible(true);
-            $array[$property->getName()] = $property->getValue($object);
-            $property->setAccessible(false);
+        foreach ($metadata as $item) {
+            $value = $entity->{'get'.ucfirst($item['fieldName'])}();
+
+            $value = (function () use ($value) {
+                $value = $this->toString($value);
+                if (strlen($value) > 18) {
+                    $value = substr($value, 0, 15).'...';
+                }
+
+                return $this->toString($value);
+            })();
+
+            $array[$item['fieldName']] = $value;
         }
+
         return $array;
     }
 
     public function dg_entityName()
     {
         return (string) preg_match('#[a-zA-Z]+$#', Workflow::getInstance()->getEntityNamespace(), $matches) ? $matches[0] : '';
+    }
+
+    private function toString($value)
+    {
+        $string = '';
+        if (is_string($value)) {
+            $string .= $value;
+        } elseif (is_integer($value)) {
+            $string .= $value;
+        } elseif (is_array($value)) {
+            foreach ($value as $v) {
+                $string .= $this->toString($v);
+            }
+        } elseif (is_a($value, \DateTime::class)) {
+            /* @var \DateTime $value */
+            $string .= $value->format('d-m-Y');
+        } elseif (is_null($value)) {
+            $string .= 'null';
+        } elseif ($value instanceof \Doctrine\Common\Collections\Collection) {
+            if ($value->isEmpty()) {
+                $string .= 'null';
+            } else {
+                foreach ($value as $item) {
+                    $string .= $this->toString($item);
+                }
+            }
+        } elseif (method_exists($value, '__toString')) {
+            $string .= $value->__toString();
+        } else {
+            dd(__CLASS__, $value);
+        }
+
+        return $string;
+    }
+
+    public function dg_pagination()
+    {
     }
 }

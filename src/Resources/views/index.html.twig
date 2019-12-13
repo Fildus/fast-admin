@@ -5,37 +5,77 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ dg_entityName() ~ ' ' ~ workflow.methodName }}</h1>
+    <main id="content">
+        <div class="content-header">
+            <header>
+                <div class="index-header-title">
+                    <h1>{{ dg_entityName() ~ ' ' ~ workflow.methodName }}</h1>
+                </div>
+                <div class="index-header-add">
+                    <a class="ia-btn btn-index"
+                       href="{{ path(dg_entityName() | lower ~ '_new') }}">Add {{ dg_entityName() }}</a>
+                </div>
+            </header>
+        </div>
+        <div class="content-body">
+            <table class="index-table">
+                <thead>
+                <tr>
+                    {% for m in entityMetadata %}
 
-    <table class="table table-responsive">
-        <thead class="thead-dark">
-        <tr>
-            {% for m in entityMetadata %}
-                <th>{{ m.fieldName | capitalize }}</th>
-            {% endfor %}
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% set entityKeys = entityMetadata | keys %}
-        {% for entity in entities %}
-            <tr>
-            {% for v in dg_dismount(entity) %}
-                <td>{% include '@DGInstantAdmin/parts/outpup.html.twig' with {'v':v} %}</td>
-            {% endfor %}
-            <td>
-                <a href="{{ path((dg_entityName() | lower) ~ '_show', {'id': entity.id}) }}">show</a>
-                <a href="{{ path((dg_entityName() | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
-            </td>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                        {% set sortDirection =workflow.controllerEvent.request.get('sortDirection') %}
+                        {% set sortField = workflow.controllerEvent.request.get('sortField') %}
+                        {% set entityName = workflow.entityName %}
 
-    <div class="text-right mb-3">
-        <a class="btn btn-success" href="{{ path(dg_entityName() | lower ~ '_new') }}">Create new</a>
-    </div>
+                        <th colspan="auto"
+                            style="width: calc(100%/{{ (entityMetadata | length) + 1 }});">
+                            {{ m.fieldName | capitalize }}
+
+                            {% if sortDirection == "DESC" and sortField == m.fieldName %}
+                                <a href="{{ path(entityName~'_index', {'sortDirection': 'ASC', 'sortField':m.fieldName}) }}">
+                                    <i class="fa fa-fw fa-arrow-down"></i>
+                                </a>
+                            {% elseif sortDirection == "ASC" and sortField == m.fieldName %}
+                                <a href="{{ path(entityName~'_index', {'sortDirection': 'DESC', 'sortField':m.fieldName}) }}">
+                                    <i class="fa fa-fw fa-arrow-up"></i>
+                                </a>
+                            {% else %}
+                                <a href="{{ path(entityName~'_index', {'sortDirection': 'ASC', 'sortField':m.fieldName}) }}">
+                                    <i class="fa fa-fw fa-sort"></i>
+                                </a>
+                            {% endif %}
+                        </th>
+                    {% endfor %}
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for entity in pagination.items %}
+                    <tr>
+                        {% for v in dg_dismount(entity, entityMetadata) %}
+                            <td>{{ v | raw }}</td>
+                        {% endfor %}
+                        <td class="index-actions">
+                            <a href="{{ path((dg_entityName() | lower) ~ '_show', {'id': entity.id}) }}">show</a>
+                            <a href="{{ path((dg_entityName() | lower)  ~ '_edit', {'id': entity.id}) }}">edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="{{ (entityMetadata | length) + 1 }}">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="content-footer">
+            <div class="index-counter-footer">
+                <strong>{{ pagination.itemsCount }}</strong> {{ (pagination.itemsCount ) > 1 ? 'resultats' : 'resultat' }}
+            </div>
+            <div class="index-navigation-footer">
+                {% include '@DGInstantAdmin/parts/pagination.html.twig' with{'p':pagination} %}
+            </div>
+        </div>
+    </main>
 {% endblock %}

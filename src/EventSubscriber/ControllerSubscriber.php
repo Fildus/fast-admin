@@ -5,6 +5,7 @@ namespace DG\InstantAdminBundle\EventSubscriber;
 use DG\InstantAdminBundle\Services\AdminAnnotation;
 use DG\InstantAdminBundle\Services\AdminControllers;
 use DG\InstantAdminBundle\Services\ControllerNamespace;
+use DG\InstantAdminBundle\Services\EntityName;
 use DG\InstantAdminBundle\Services\EntityNamespace;
 use DG\InstantAdminBundle\Services\MethodName;
 use DG\InstantAdminBundle\Workflow;
@@ -36,14 +37,17 @@ class ControllerSubscriber implements EventSubscriberInterface
                 $this->container->get(AdminAnnotation::class)->run() &&
                 $this->container->get(EntityNamespace::class)->run()
             ) {
-                $controller = $this->container->get(Workflow::getInstance()->getControllerNamespace());
                 $method = Workflow::getInstance()->getMethodName();
 
-                $controllerReturn = $controller->$method();
-                Workflow::getInstance()->setControllerReturn($controllerReturn);
+                Workflow::getInstance()->setControllerReturn(
+                    ($this->container->get(Workflow::getInstance()->getControllerNamespace()))->$method()
+                );
 
-                $controller = $this->container->get('instant_admin_bundle.instant_admin_controller');
-                $event->setController(fn () => $controller->$method());
+                $this->container->get(EntityName::class)->run();
+
+                $event->setController(
+                    fn () => ($this->container->get('instant_admin_bundle.instant_admin_controller'))->$method()
+                );
             }
         }
     }

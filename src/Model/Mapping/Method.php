@@ -1,13 +1,13 @@
 <?php
 
-namespace DG\InstantAdminBundle\Mapping\Model;
+namespace DG\InstantAdminBundle\Model\Mapping;
 
 use DG\InstantAdminBundle\Annotations\InstantAdmin;
 
 class Method
 {
     private string $name;
-    private InstantAdmin $adminAnnotation;
+    private ?InstantAdmin $adminAnnotation = null;
 
     public function getName(): string
     {

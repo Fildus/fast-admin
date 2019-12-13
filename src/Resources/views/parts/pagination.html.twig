@@ -1,0 +1,33 @@
+<div class="pagination">
+    {% if p.currentPageNumber == 1 %}
+        <a href="{{ path(app.request.get('_route'), {'page':p.currentPageNumber}) }}"
+           class="btn-pagination btn-previous disabled">
+            <i class="fas fa-chevron-left"></i> previous
+        </a>
+    {% else %}
+        <a href="{{ path(app.request.get('_route'), {'page':1}) }}"
+           class="btn-pagination btn-previous">
+            <i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>
+        </a>
+        <a href="{{ path(app.request.get('_route'), {'page':p.currentPageNumber - 1}) }}"
+           class="btn-pagination">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    {% endif %}
+
+    {% if p.currentPageNumber >= (p.itemsCount/p.itemsPerPageNumber) | round(1, 'floor') %}
+        <a href="{{ path(app.request.get('_route'), {'page':p.currentPageNumber}) }}"
+           class="btn-pagination btn-next disabled">
+            next <i class="fas fa-chevron-right"></i>
+        </a>
+    {% elseif p.itemsCount > 1 %}
+        <a href="{{ path(app.request.get('_route'), {'page':p.currentPageNumber + 1}) }}"
+           class="btn-pagination">
+            next <i class="fas fa-chevron-right"></i>
+        </a>
+        <a href="{{ path(app.request.get('_route'), {'page': (p.itemsCount/p.itemsPerPageNumber) | round(0,'ceil') }) }}"
+           class="btn-pagination btn-next">
+            <i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i>
+        </a>
+    {% endif %}
+</div>

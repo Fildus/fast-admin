@@ -3,6 +3,7 @@
 namespace DG\InstantAdminBundle\Controller;
 
 use DG\InstantAdminBundle\Repository\Repository;
+use DG\InstantAdminBundle\Services\Pagination;
 use DG\InstantAdminBundle\Workflow;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,7 @@ class InstantAdminController extends AbstractController
 
     private Repository $repository;
     private EntityManager $entityManager;
+    private Paginator $paginator;
 
     public function __construct(Repository $repository, EntityManager $entityManager)
     {
@@ -23,8 +25,9 @@ class InstantAdminController extends AbstractController
 
     public function index()
     {
+        dump($this->container->get(Pagination::class)->paginate());
         return $this->render('@DGInstantAdmin/index.html.twig', [
-            'entities' => $this->repository->findAll(),
+            'pagination' => $this->container->get(Pagination::class)->paginate(),
             'workflow' => Workflow::getInstance(),
             'entityMetadata' => $this->getEntityMetadata(),
         ]);

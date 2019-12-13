@@ -3,8 +3,8 @@
 namespace DG\InstantAdminBundle\Services;
 
 use DG\InstantAdminBundle\Annotations\InstantAdmin;
-use DG\InstantAdminBundle\Mapping\Model\Controller;
-use DG\InstantAdminBundle\Mapping\Model\Method;
+use DG\InstantAdminBundle\Model\Mapping\Controller;
+use DG\InstantAdminBundle\Model\Mapping\Method;
 use DG\InstantAdminBundle\Methods;
 use DG\InstantAdminBundle\Workflow;
 use Doctrine\Common\Annotations\Reader;

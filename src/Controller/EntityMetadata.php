@@ -2,7 +2,6 @@
 
 namespace DG\InstantAdminBundle\Controller;
 
-use App\Entity\Project;
 use DG\InstantAdminBundle\Workflow;
 use Doctrine\ORM\EntityManager;
 

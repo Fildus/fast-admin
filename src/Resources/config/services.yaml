@@ -54,3 +54,13 @@ services:
         public: true
         arguments:
           ['@doctrine.orm.default_entity_manager']
+
+    DG\InstantAdminBundle\Services\EntityName:
+        public: true
+        arguments:
+          ['@doctrine.orm.default_entity_manager']
+
+    DG\InstantAdminBundle\Services\Pagination:
+        public: true
+        arguments:
+          ['@instant_admin_bundle.repository']

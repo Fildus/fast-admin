@@ -5,7 +5,7 @@ namespace DG\InstantAdminBundle\Services;
 use DG\InstantAdminBundle\Workflow;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class EntityNamespace
+class EntityName
 {
     private ObjectManager $manager;
 
@@ -17,16 +17,14 @@ class EntityNamespace
     public function run()
     {
         preg_match('#([a-zA-Z]+)Controller#', Workflow::getInstance()->getControllerNamespace(), $matches);
-        $entityNamespace = $matches[1];
+        $entityName = strtolower($matches[1]);
+        if (is_string($entityName)) {
+            Workflow::getInstance()->setEntityName($entityName);
 
-        if (is_string($entityNamespace)) {
-            $entityNamespace = 'App\Entity\\'.$entityNamespace;
-            if (class_exists($entityNamespace)) {
-                Workflow::getInstance()->setEntityNamespace($entityNamespace);
-
-                return true;
-            }
+            return true;
         }
+        Workflow::getInstance()->setEntityName(null);
+
         return false;
     }
 }
