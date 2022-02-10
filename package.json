@@ -21,7 +21,7 @@
     "exports-loader": "^0.6.4",
     "file-loader": "^5.0.2",
     "jquery": "^3.3.1",
-    "node-sass": "^4.7.2",
+    "node-sass": "^7.0.0",
     "popper.js": "^1.12.9",
     "postcss-loader": "^2.0.10",
     "sass-loader": "^6.0.6",
